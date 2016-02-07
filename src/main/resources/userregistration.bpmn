@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn">
   <bpmn:collaboration id="Collaboration_1agnjhn">
     <bpmn:participant id="Participant_045f1co" name="CAMUNDA" processRef="UserRegistration" />
   </bpmn:collaboration>
@@ -7,12 +7,8 @@
     <bpmn:startEvent id="StartUserRegistration">
       <bpmn:outgoing>SequenceFlow_15zcoaj</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_15zcoaj" sourceRef="StartUserRegistration" targetRef="SendTask_0fmrjvq" />
-    <bpmn:sendTask id="SendTask_0fmrjvq" name="Send Email Validation">
-      <bpmn:incoming>SequenceFlow_15zcoaj</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0dey7me</bpmn:outgoing>
-    </bpmn:sendTask>
-    <bpmn:sequenceFlow id="SequenceFlow_0dey7me" sourceRef="SendTask_0fmrjvq" targetRef="EventBasedGateway_1f8rev1" />
+    <bpmn:sequenceFlow id="SequenceFlow_15zcoaj" sourceRef="StartUserRegistration" targetRef="SendTask_0yvg7d8" />
+    <bpmn:sequenceFlow id="SequenceFlow_0dey7me" sourceRef="SendTask_0yvg7d8" targetRef="EventBasedGateway_1f8rev1" />
     <bpmn:sequenceFlow id="SequenceFlow_1sgd5fr" sourceRef="EventBasedGateway_1f8rev1" targetRef="IntermediateCatchEvent_03xnbag" />
     <bpmn:sequenceFlow id="SequenceFlow_11izhvq" sourceRef="EventBasedGateway_1f8rev1" targetRef="IntermediateCatchEvent_1iebs6a" />
     <bpmn:eventBasedGateway id="EventBasedGateway_1f8rev1">
@@ -29,7 +25,7 @@
       <bpmn:incoming>SequenceFlow_1sgd5fr</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0hjwhmm</bpmn:outgoing>
       <bpmn:timerEventDefinition>
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">1d</bpmn:timeDuration>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P1D</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:intermediateCatchEvent>
     <bpmn:sequenceFlow id="SequenceFlow_0hjwhmm" sourceRef="IntermediateCatchEvent_03xnbag" targetRef="EndEvent_12x1fuu" />
@@ -37,7 +33,7 @@
       <bpmn:incoming>SequenceFlow_0hjwhmm</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_09t1wfx" sourceRef="IntermediateCatchEvent_1iebs6a" targetRef="ServiceTask_1j3j6sc" />
-    <bpmn:serviceTask id="ServiceTask_1j3j6sc" name="Create User">
+    <bpmn:serviceTask id="ServiceTask_1j3j6sc" name="Create User" camunda:class="de.drtodolittle.processapp.delegate.CreateUser">
       <bpmn:incoming>SequenceFlow_09t1wfx</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0wk6eyu</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -45,6 +41,10 @@
     <bpmn:endEvent id="EndEvent_1p1jeoy" name="Registration successfull">
       <bpmn:incoming>SequenceFlow_0wk6eyu</bpmn:incoming>
     </bpmn:endEvent>
+    <bpmn:sendTask id="SendTask_0yvg7d8" name="Send Email Validation" camunda:class="de.drtodolittle.processapp.delegate.SendEmailValidation">
+      <bpmn:incoming>SequenceFlow_15zcoaj</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0dey7me</bpmn:outgoing>
+    </bpmn:sendTask>
   </bpmn:process>
   <bpmn:message id="Message_1gq9a7r" name="mailverification" />
   <bpmn:message id="Message_0y21dfl" name="v" />
@@ -68,9 +68,6 @@
           <dc:Bounds x="186" y="126" width="90" height="20" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="SendTask_0fmrjvq_di" bpmnElement="SendTask_0fmrjvq">
-        <dc:Bounds x="276" y="96" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="IntermediateCatchEvent_1iebs6a_di" bpmnElement="IntermediateCatchEvent_1iebs6a">
         <dc:Bounds x="586" y="118" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -149,6 +146,9 @@
           <dc:Bounds x="756.5" y="126" width="90" height="20" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="SendTask_0yvg7d8_di" bpmnElement="SendTask_0yvg7d8">
+        <dc:Bounds x="276" y="96" width="100" height="80" />
+      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
