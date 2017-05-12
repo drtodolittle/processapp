@@ -1,3 +1,4 @@
 # Remove all files from docker build contexct and add only the dist directory
 **/*
 !target/drtodolittle-processapp.war
+!src/main/tomcat-conf
